@@ -112,7 +112,7 @@ function mainloop()
                 floatpart.Parent = workspace
             end
             local humroot = player.Character:FindFirstChild("HumanoidRootPart") or player.Character.Rig:FindFirstChild("HumanoidRootPart")
-            floatpart.Position = humroot.Position - Vector3.new(0, 2.49, 0)
+            floatpart.Position = humroot.Position - Vector3.new(0, 2.55, 0)
         end
     end
 end
