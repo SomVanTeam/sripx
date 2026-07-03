@@ -15,7 +15,7 @@ end
 
 local orion = loadstring(game:HttpGet(("https://raw.githubusercontent.com/jensonhirst/Orion/main/source")))()
 
-local window = orion:MakeWindow({Name = "Dingus TH Vladimir", HidePremium = true, SaveConfig = false, ConfigFolder = "OrionTest", IntroText = "EBANATI"})
+local window = orion:MakeWindow({Name = "Dingus TH Vladimir", HidePremium = true, SaveConfig = false, ConfigFolder = "OrionTest", IntroText = "EBANATI2"})
 
 local maintab = window:MakeTab({
 	Name = "Main",
@@ -41,9 +41,7 @@ end
 
 maintab:AddButton({
 	Name = "Enable ESP",
-	Callback = function(Value)
-		addesp()
-	end    
+	Callback = addesp
 })
 
 maintab:AddColorpicker({
