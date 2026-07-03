@@ -36,7 +36,7 @@ local function addesp()
             continue
         end
         local highlightTag = m:GetAttribute("HighlightTag")
-        if highlightTag == "Hunter" or highlightTag == "horde???" then
+        if highlightTag == "Hunter" or highlightTag == "HordeTracker" then
             simpleESP(m, orion.Flags["huntercolor"].Value)
         else
             simpleESP(m, orion.Flags["hidercolor"].Value)
