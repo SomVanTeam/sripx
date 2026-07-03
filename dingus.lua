@@ -112,7 +112,7 @@ function mainloop()
                 floatpart.Parent = workspace
             end
             local humroot = player.Character:FindFirstChild("HumanoidRootPart") or player.Character.Rig:FindFirstChild("HumanoidRootPart")
-            floatpart.Position = humroot.Position - Vector3.new(0, 2.55, 0)
+            floatpart.Position = humroot.Position - Vector3.new(0, orion.Flags["floattest"].Value, 0)
         end
     end
 end
@@ -151,6 +151,20 @@ maintab:AddButton({
 	Callback = function()
 
     end
+})
+
+maintab:AddSlider({
+	Name = "Test10",
+	Min = 0,
+	Max = 4,
+	Default = 4,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 0.05,
+	ValueName = "bananas",
+    Flag = "floattest",
+	Callback = function(Value)
+		print(Value)
+	end    
 })
 
 maintab:AddToggle({
