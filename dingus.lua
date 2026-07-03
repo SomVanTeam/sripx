@@ -154,20 +154,6 @@ maintab:AddButton({
     end
 })
 
-maintab:AddSlider({
-	Name = "Test10",
-	Min = 0,
-	Max = 4,
-	Default = 4,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = 0.05,
-	ValueName = "bananas",
-    Flag = "floattest",
-	Callback = function(Value)
-		print(Value)
-	end    
-})
-
 maintab:AddToggle({
 	Name = "Float",
     Default = false,
