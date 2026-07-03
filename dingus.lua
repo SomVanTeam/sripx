@@ -35,12 +35,26 @@ local function addesp()
             print(p.Name.." Not Found")
             continue
         end
-        simpleESP(m, orion.Flags["hidercolor"].Value)
+        local highlightTag = m:GetAttribute("HighlightTag")
+        if highlightTag == "Hunter" or highlightTag == "horde???" then
+            simpleESP(m, orion.Flags["huntercolor"].Value)
+        else
+            simpleESP(m, orion.Flags["hidercolor"].Value)
+        end
     end
 end
 
+maintab:AddToggle({
+	Name = "Noclip",
+    Default = false,
+    Flag = "noclip",
+	Callback = function(Value)
+
+    end
+})
+
 maintab:AddButton({
-	Name = "Enable ESP",
+	Name = "ESP",
 	Callback = addesp
 })
 
