@@ -29,6 +29,24 @@ function getCurrentCollidersFolder():Folder
     return collidersFolder
 end
 
+-- {{all tasks}, {active tasks}}
+function getTasks()
+    local tasks = {}
+    local activetasks = {}
+    local map = getCurrentMap()
+    for _, t in pairs(map:GetChildren()) do
+        if t.Name == "PointTask" then
+            table.insert(tasks, t)
+            local tr = t.Gradients.Outer.GradientUI.ActiveGradient.ImageTransparency
+            if tr ~= 1 then
+                print("active task")
+                table.insert(activetasks, t)
+            end
+        end
+    end
+    return {tasks, activetasks}
+end
+
 local pathfinding
 function attemptPathfindTo(target:Vector3):nil
     if pathfinding then
@@ -85,6 +103,7 @@ local maintab = window:MakeTab({
 })
 
 local function addesp()
+    print(getTasks())
     for _, h in pairs(workspace:GetDescendants()) do
         if h and h:IsA("Highlight") then
             h:Destroy()
