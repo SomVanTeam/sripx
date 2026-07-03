@@ -18,10 +18,11 @@ end
 local orion = loadstring(game:HttpGet(("https://raw.githubusercontent.com/jensonhirst/Orion/main/source")))()
 
 function mainloop()
-    if orion.Flags["noclip"].Value and player.Character ~= nil then
+    if player.Character ~= nil then
+        local noclip = orion.Flags["noclip"].Value
         for _, child in pairs(player.Character:GetChildren()) do
             if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatName then
-                child.CanCollide = false
+                child.CanCollide = not noclip
             end
         end
     end
