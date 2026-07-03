@@ -1,4 +1,5 @@
 --loadstring(game:HttpGet(("https://raw.githubusercontent.com/SomVanTeam/sripx/refs/heads/main/dingus.lua")))()
+local pathfindingService = game:GetService("PathfindingService")
 local player = game.Players.LocalPlayer
 local floatName = "FLOATPART"
 
@@ -15,13 +16,60 @@ function simpleESP(target:Instance, fillcolor:Color3)
     highlight.Parent = target
 end
 
+function getCurrentMap():Model
+    return workspace:FindFirstChild("CliffsideV2")
+        or workspace:FindFirstChild("OldBeach")
+        or workspace:FindFirstChild("LegacyWildWest")
+        or workspace:FindFirstChild("BeachRedux")
+end
+
+function getCurrentCollidersFolder():Folder
+    local map = getCurrentMap()
+    local collidersFolder = map:FindFirstChild("InvisibleBoxes") or map:FindFirstChild("Colliders")
+    return collidersFolder
+end
+
+local pathfinding
+function attemptPathfindTo(target:Vector3):nil
+    if pathfinding then
+        task.cancel(pathfinding)
+    end
+    pathfinding = task.spawn(function()
+        local path = PathfindingService:CreatePath({
+            AgentCanClimb = false,
+            AgentCanJump = false,
+            Costs = { -- AccessOnly DislikeWalk NoPathfind Passable
+                NoPathfind = math.huge, DislikeWalk = 20, AccessOnly = -10
+            }
+        })
+        path:ComputeAsync(player.Character.HumanoidRootPart.Position, target)
+        local waypoints = path:GetWaypoints()
+        for _, waypoint in pairs(waypoints) do
+            local centertarget = Instance.new("Part")
+            centertarget.CanCollide = false
+            centertarget.Anchored = true
+            centertarget.Position = waypoint.Position
+            centertarget.Parent = workspace
+            player.Character.Humanoid:MoveTo(waypoint.Position, centertarget)
+            player.Character.Humanoid.MoveToFinished:Wait()
+            centertarget:Destroy()
+        end
+    end)
+end
+
+-- function pushPart(dir:Vector3, pushinto)
+--     local map = getCurrentMap()
+--     local collidersFolder = map:FindFirstChild("InvisibleBoxes")
+--     -- :IsDescendantOf(collidersFolder)
+-- end
+
 local orion = loadstring(game:HttpGet(("https://raw.githubusercontent.com/jensonhirst/Orion/main/source")))()
 
 function mainloop()
     if player.Character ~= nil then
         local noclip = orion.Flags["noclip"].Value
         for _, child in pairs(player.Character:GetChildren()) do
-            if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatName then
+            if child:IsA("BasePart") and child.CanCollide == noclip and child.Name ~= floatName then
                 child.CanCollide = not noclip
             end
         end
@@ -79,6 +127,38 @@ maintab:AddColorpicker({
 	Name = "Hiders ESP",
 	Default = Color3.fromRGB(200, 16, 64),
 	Flag = "hidercolor"
+})
+
+maintab:AddToggle({
+	Name = "Show Colliders",
+    Default = false,
+	Callback = function(Value)
+        for _, part in pairs(getCurrentCollidersFolder():GetDescendants()) do
+            if part:IsA("Part") then
+                if Value then
+                    part.Transparency = 0
+                else
+                    part.Transparency = 1
+                end
+            end
+        end
+    end
+})
+
+maintab:AddToggle({
+	Name = "Auto Walk Test",
+    Default = false,
+    Flag = "autowalking",
+	Callback = function(Value)
+        if Value then
+            
+        else
+            if pathfinding then
+                task.cancel(pathfinding)
+            end
+            pathfinding = nil
+        end
+    end
 })
 
 orion:Init()
