@@ -107,12 +107,12 @@ function mainloop()
                 floatpart = Instance.new("Part")
                 floatpart.Anchored = true
                 floatpart.CanCollide = true
-                floatpart.Size = Vector3.new(2, 0.1, 2)
+                floatpart.Size = Vector3.new(2.5, 0.1, 2.5)
                 floatpart.Name = floatName
                 floatpart.Parent = workspace
             end
             local humroot = player.Character:FindFirstChild("HumanoidRootPart") or player.Character.Rig:FindFirstChild("HumanoidRootPart")
-            floatpart.Position = humroot.Position - Vector3.new(0, 2.45, 0)
+            floatpart.Position = humroot.Position - Vector3.new(0, 2.49, 0)
         end
     end
 end
