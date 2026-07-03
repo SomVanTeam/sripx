@@ -40,7 +40,7 @@ local function addesp()
 end
 
 maintab:AddButton({
-	Name = "ESP",
+	Name = "Enable ESP",
 	Callback = function(Value)
 		addesp()
 	end    
@@ -59,3 +59,4 @@ maintab:AddColorpicker({
 })
 
 orion:Init()
+print("--------------------------------- INIT -------------------------------")
