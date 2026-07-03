@@ -18,9 +18,9 @@ end
 
 local orion = loadstring(game:HttpGet(("https://raw.githubusercontent.com/jensonhirst/Orion/main/source")))()
 
-local window = orion:MakeWindow({Name = "Prep Test", HidePremium = true, SaveConfig = false, ConfigFolder = "OrionTest"})
+local window = orion:MakeWindow({Name = "Dingus TH Vladimir", HidePremium = true, SaveConfig = false, ConfigFolder = "OrionTest", IntroText = "EBANATI"})
 
-local maintab = Window:MakeTab({
+local maintab = window:MakeTab({
 	Name = "Main",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
