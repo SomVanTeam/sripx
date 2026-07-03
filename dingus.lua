@@ -1,7 +1,7 @@
 --loadstring(game:HttpGet(("https://raw.githubusercontent.com/SomVanTeam/sripx/refs/heads/main/dingus.lua")))()
 local pathfindingService = game:GetService("PathfindingService")
 local player = game.Players.LocalPlayer
-local floatName = "FLOATPART"
+local floatName = "8daGGgtdygg6TG688dh"
 
 function simpleESP(target:Instance, fillcolor:Color3)
     print("Highlighting "..target.Name)
@@ -29,13 +29,16 @@ function getCurrentCollidersFolder():Folder
     return collidersFolder
 end
 
--- {{all tasks}, {active tasks}}
+-- returns {{all tasks}, {active tasks}} DOESNT RETURN GREEN TASKS
 function getTasks()
     local tasks = {}
     local activetasks = {}
     local map = getCurrentMap()
     for _, t in pairs(map:GetChildren()) do
         if t.Name == "PointTask" then
+            if t.Base.Color == Color3.fromRGB(137, 255, 111) then
+                continue
+            end
             table.insert(tasks, t)
             local tr = t.Gradients.Outer.GradientUI.ActiveGradient.ImageTransparency
             if tr ~= 1 then
@@ -45,6 +48,10 @@ function getTasks()
         end
     end
     return {tasks, activetasks}
+end
+
+function isRedTask(task:Model)
+    return task.Base.Color == Color3.fromRGB(255, 83, 83)
 end
 
 local pathfinding
@@ -83,13 +90,27 @@ end
 
 local orion = loadstring(game:HttpGet(("https://raw.githubusercontent.com/jensonhirst/Orion/main/source")))()
 
+local floatpart = nil
 function mainloop()
     if player.Character ~= nil then
         local noclip = orion.Flags["noclip"].Value
+        local float = orion.Flags["float"].Value
+
         for _, child in pairs(player.Character:GetChildren()) do
             if child:IsA("BasePart") and child.CanCollide == noclip and child.Name ~= floatName then
                 child.CanCollide = not noclip
             end
+        end
+
+        if float then
+            if floatpart == nil then
+                floatpart = Instance.new("Part")
+                floatpart.Anchored = true
+                floatpart.CanCollide = true
+                floatpart.Size = Vector3.new(2, 0.1, 2)
+                floatpart.Parent = workspace
+            end
+            floatpart.Position = player.Character.HumanoidRootPart.Position - Vector3.new(0, 2.45, 0)
         end
     end
 end
@@ -103,7 +124,6 @@ local maintab = window:MakeTab({
 })
 
 local function addesp()
-    print(getTasks())
     for _, h in pairs(workspace:GetDescendants()) do
         if h and h:IsA("Highlight") then
             h:Destroy()
@@ -123,6 +143,20 @@ local function addesp()
         end
     end
 end
+
+maintab:AddButton({
+	Name = "Test1",
+	Callback = function()
+
+    end
+})
+
+maintab:AddToggle({
+	Name = "Float",
+    Default = false,
+    Flag = "float",
+	Callback = function(Value) end
+})
 
 maintab:AddToggle({
 	Name = "Noclip",
@@ -165,7 +199,7 @@ maintab:AddToggle({
 })
 
 maintab:AddToggle({
-	Name = "Auto Walk Test",
+	Name = "Test2",
     Default = false,
     Flag = "autowalking",
 	Callback = function(Value)
