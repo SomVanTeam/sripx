@@ -107,12 +107,13 @@ function mainloop()
                 floatpart = Instance.new("Part")
                 floatpart.Anchored = true
                 floatpart.CanCollide = true
-                floatpart.Size = Vector3.new(2.5, 0.1, 2.5)
+                floatpart.Size = Vector3.new(32, 0.1, 32)
                 floatpart.Name = floatName
+                floatpart.Transparency = 0.9
                 floatpart.Parent = workspace
             end
             local humroot = player.Character:FindFirstChild("HumanoidRootPart") or player.Character.Rig:FindFirstChild("HumanoidRootPart")
-            floatpart.Position = humroot.Position - Vector3.new(0, orion.Flags["floattest"].Value, 0)
+            floatpart.Position = humroot.Position - Vector3.new(0, 3, 0)
         end
     end
 end
