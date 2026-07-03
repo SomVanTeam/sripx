@@ -1,4 +1,6 @@
 --loadstring(game:HttpGet(("https://raw.githubusercontent.com/SomVanTeam/sripx/refs/heads/main/dingus.lua")))()
+local player = game.Players.LocalPlayer
+local floatName = "FLOATPART"
 
 function simpleESP(target:Instance, fillcolor:Color3)
     print("Highlighting "..target.Name)
@@ -14,6 +16,16 @@ function simpleESP(target:Instance, fillcolor:Color3)
 end
 
 local orion = loadstring(game:HttpGet(("https://raw.githubusercontent.com/jensonhirst/Orion/main/source")))()
+
+function mainloop()
+    if orion.Flags["noclip"].Value and player.Character ~= nil then
+        for _, child in pairs(player.Character:GetChildren()) do
+            if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatName then
+                child.CanCollide = false
+            end
+        end
+    end
+end
 
 local window = orion:MakeWindow({Name = "Dingus TH Vladimir", HidePremium = true, SaveConfig = false, ConfigFolder = "OrionTest", IntroText = "EBANATI2"})
 
@@ -48,9 +60,7 @@ maintab:AddToggle({
 	Name = "Noclip",
     Default = false,
     Flag = "noclip",
-	Callback = function(Value)
-
-    end
+	Callback = function(Value) end
 })
 
 maintab:AddButton({
@@ -71,4 +81,5 @@ maintab:AddColorpicker({
 })
 
 orion:Init()
-print("--------------------------------- INIT -------------------------------")
+game:GetService("RunService").Stepped:Connect(mainloop)
+print("--------------------------------- DINGUS TH INIT -------------------------------")
