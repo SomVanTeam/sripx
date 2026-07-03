@@ -108,9 +108,11 @@ function mainloop()
                 floatpart.Anchored = true
                 floatpart.CanCollide = true
                 floatpart.Size = Vector3.new(2, 0.1, 2)
+                floatpart.Name = floatName
                 floatpart.Parent = workspace
             end
-            floatpart.CFrame = CFrame.new(player.Character.Rig.HumanoidRootPart.Position - Vector3.new(0, 2.45, 0))
+            local humroot = player.Character:FindFirstChild("HumanoidRootPart") or player.Character.Rig:FindFirstChild("HumanoidRootPart")
+            floatpart.Position = humroot.Position - Vector3.new(0, 2.45, 0)
         end
     end
 end
