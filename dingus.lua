@@ -1,8 +1,5 @@
---[[
-loadstring(game:HttpGet((
-"https://raw.githubusercontent.com/SomVanTeam/sripx/refs/heads/main/dingus.lua"
-)))()
-]]
+--loadstring(game:HttpGet(("https://raw.githubusercontent.com/SomVanTeam/sripx/refs/heads/main/dingus.lua")))()
+
 function simpleESP(target:Instance, fillcolor:Color3)
     print("Highlighting "..target.Name)
     local highlight = Instance.new("Highlight")
@@ -42,20 +39,20 @@ local function addesp()
     end
 end
 
-esptab:AddButton({
+maintab:AddButton({
 	Name = "ESP",
 	Callback = function(Value)
 		addesp()
 	end    
 })
 
-esptab:AddColorpicker({
+maintab:AddColorpicker({
 	Name = "Hunters ESP",
 	Default = Color3.fromRGB(32, 32, 32),
 	Flag = "huntercolor"
 })
 
-esptab:AddColorpicker({
+maintab:AddColorpicker({
 	Name = "Hiders ESP",
 	Default = Color3.fromRGB(128, 16, 200),
 	Flag = "hidercolor"
