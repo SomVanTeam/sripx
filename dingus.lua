@@ -6,7 +6,7 @@ function simpleESP(target:Instance, fillcolor:Color3)
     highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
     highlight.OutlineTransparency = 0
     highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-    highlight.FillTransparency = 0.5
+    highlight.FillTransparency = 0.25
     highlight.FillColor = fillcolor
     highlight.Enabled = true
     --highlight.Adornee = target
