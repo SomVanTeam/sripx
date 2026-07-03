@@ -52,7 +52,7 @@ maintab:AddColorpicker({
 
 maintab:AddColorpicker({
 	Name = "Hiders ESP",
-	Default = Color3.fromRGB(128, 16, 200),
+	Default = Color3.fromRGB(200, 16, 64),
 	Flag = "hidercolor"
 })
 
