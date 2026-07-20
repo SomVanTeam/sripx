@@ -87,4 +87,4 @@ function toggleTimer()
     timerstopped = not timerstopped
 end
 
-giveStatus(TARGETALL, STATUSTYPE["Vulnerable"], STATUSLEVEL["1l"], STATUSLEN["30s"])
+giveStatus(TARGETALL, STATUSTYPE["Vulnerable"], STATUSLEVEL["1l"], STATUSLEN["60s"])
