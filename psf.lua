@@ -25,41 +25,45 @@ function userToBuf(user)
     --     table.insert(bytes, string.byte(char))
     -- end
     -- return bufferFromBytes(bytes)
-    return buffer.fromstring("\x03\x0b\x00\x00\x00"..user)
+    return buffer.fromstring("\x03\x0B\x00\x00\x00"..user)
 end
 
 local COMMANDS = {
-    ["GiveStatus"] = buffer.fromstring("\x03\x0a\x00\x00\x00GiveStatus"),--bufferFromBytes({3, 10, 0, 0, 0, 71, 105, 118, 101, 83, 116, 97, 116, 117, 115}),
-    ["KillPlayer"] = buffer.fromstring("\x03\x0a\x00\x00\x00KillPlayer"),--bufferFromBytes({3, 10, 0, 0, 0, 75, 105, 108, 108, 80, 108, 97, 121, 101, 114}),
-    ["ToggleTimer"] = buffer.fromstring("\x03\x0b\x00\x00\x00ToggleTimer"),--bufferFromBytes({3, 11, 0, 0, 0, 84, 111, 103, 103, 108, 101, 84, 105, 109, 101, 114}),
+    ["GiveStatus"] = buffer.fromstring("\x03\x0A\x00\x00\x00GiveStatus"),
+    ["KillPlayer"] = buffer.fromstring("\x03\x0A\x00\x00\x00KillPlayer"),
+    ["ToggleTimer"] = buffer.fromstring("\x03\x0B\x00\x00\x00ToggleTimer"),
+    ["ForceNextKiller"] = buffer.fromstring("\x03\x0F\x00\x00\x00ForceNextKiller"),
+    ["ForceRoundEnd"] = buffer.fromstring("\x03\r\x00\x00\x00ForceRoundEnd"),
+    ["ForceIntermissionEnd"] = buffer.fromstring("\x03\x14\x00\x00\x00ForceIntermissionEnd"),
 }
 local STATUSTYPE = {
-    ["Vulnerable"] = buffer.fromstring("\x03\x0a\x00\x00\x00Vulnerable"),--bufferFromBytes({3, 10, 0, 0, 0, 86, 117, 108, 110, 101, 114, 97, 98, 108, 101}),
-    ["Resistance"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["Speed"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["Slowness"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["Invisibility"] = buffer.fromstring(""),--bufferFromBytes({}),
+    ["Vulnerable"] = buffer.fromstring("\x03\x0A\x00\x00\x00Vulnerable"),
+    ["Resistance"] = buffer.fromstring(""),
+    ["Speed"] = buffer.fromstring(""),
+    ["Slowness"] = buffer.fromstring(""),
+    ["Invisibility"] = buffer.fromstring(""),
+    ["Stunned"] = buffer.fromstring("\x03\a\x00\x00\x00Stunned"),
 }
 local STATUSLEVEL = {
-    ["1l"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\xF0?"),--bufferFromBytes({2, 0, 0, 0, 0, 0, 0, 240, 63}),
-    ["2l"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["3l"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["4l"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["5l"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["6l"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["7l"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["8l"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["9l"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["10l"] = buffer.fromstring(""),--bufferFromBytes({}),
+    ["1l"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\xF0?"),
+    ["2l"] = buffer.fromstring(""),
+    ["3l"] = buffer.fromstring(""),
+    ["4l"] = buffer.fromstring(""),
+    ["5l"] = buffer.fromstring(""),
+    ["6l"] = buffer.fromstring(""),
+    ["7l"] = buffer.fromstring(""),
+    ["8l"] = buffer.fromstring(""),
+    ["9l"] = buffer.fromstring(""),
+    ["10l"] = buffer.fromstring(""),
 }
 local STATUSLEN = {
-    ["5s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x14@"),--bufferFromBytes({2, 0, 0, 0, 0, 0, 0, 20, 64}),
-    ["10s"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["15s"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["20s"] = buffer.fromstring(""),--bufferFromBytes({}),
-    ["30s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00>@"),--bufferFromBytes({2, 0, 0, 0, 0, 0, 0, 62, 64}),
-    ["60s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00N@"),--bufferFromBytes({2, 0, 0, 0, 0, 0, 0, 78, 64}),
-    ["90s"] = buffer.fromstring(""),--bufferFromBytes({}),
+    ["5s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x14@"),
+    ["10s"] = buffer.fromstring(""),
+    ["15s"] = buffer.fromstring(""),
+    ["20s"] = buffer.fromstring(""),
+    ["30s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00>@"),
+    ["60s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00N@"),
+    ["90s"] = buffer.fromstring(""),
 }
 
 function giveStatus(targetbuf, statustypebuf, statuslevelbuf, statuslenbuf)
@@ -87,4 +91,27 @@ function toggleTimer()
     timerstopped = not timerstopped
 end
 
-giveStatus(TARGETALL, STATUSTYPE["Vulnerable"], STATUSLEVEL["1l"], STATUSLEN["60s"])
+function forceRoundEnd()
+    execCommand({
+        COMMANDS["ForceRoundEnd"]
+    })
+end
+
+function forceIntermissionEnd()
+    execCommand({
+        COMMANDS["ForceIntermissionEnd"]
+    })
+end
+
+function forceNextKiller(targetbuf)
+    execCommand({
+        COMMANDS["ForceNextKiler"],
+        targetbuf
+    })
+end
+
+forceNextKiller(userToBuf("th_vladaimir"))
+forceIntermissionEnd()
+toggleTimer()
+task.wait(5)
+giveStatus(TARGETALL, STATUSTYPE["Stunned"], STATUSLEVEL["1l"], STATUSLEN["5s"])
