@@ -195,6 +195,7 @@ function endRound()
 end
 
 function canPlay(plr)
+    -- for some insane reason this doesnt work
     -- if not plr:GetAttribute("Loaded") then
     --     return false
     -- end
@@ -322,7 +323,7 @@ function mainloop()
     if roundBegan then
         if orion.Flags["givestatuses"].Value then
             d += 1
-            if d >= 3*60 then
+            if d >= 120 then
                 d = 0
                 for _, plr in pairs(game.Players:GetPlayers()) do
                     if canPlay(plr) then
