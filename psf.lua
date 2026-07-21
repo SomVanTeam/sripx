@@ -1,4 +1,5 @@
 --[[
+https://www.roblox.com/share?code=c947bd6f9524044eb7524850a33fa41b&type=Server
 loadstring(game:HttpGet(("https://raw.githubusercontent.com/SomVanTeam/sripx/refs/heads/main/psf.lua")))()
 ]]
 
@@ -193,12 +194,12 @@ function endRound()
 end
 
 function canPlay(plr)
-    if not plr:GetAttribute("Loaded") then
-        return false
-    end
-    if plr.PlayerData.Settings.Game.AFK.Value then
-        return false
-    end
+    -- if not plr:GetAttribute("Loaded") then
+    --     return false
+    -- end
+    -- if plr.PlayerData.Settings.Game.AFK.Value then
+    --     return false
+    -- end
     return true
 end
 
