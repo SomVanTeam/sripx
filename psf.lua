@@ -1,15 +1,10 @@
 --[[
 loadstring(game:HttpGet(("https://raw.githubusercontent.com/SomVanTeam/sripx/refs/heads/main/psf.lua")))()
 ]]
-local networker = game.ReplicatedStorage.Modules.Network.Network.RemoteEvent
 
--- function bufferFromBytes(bytes)
---     local b = buffer.create(#bytes)
---     for i = 1, #bytes do
---         buffer.writeu8(b, i - 1, bytes[i])
---     end
---     return b
--- end
+------------------- LOGIC -------------------
+
+local networker = game.ReplicatedStorage.Modules.Network.Network.RemoteEvent
 
 function execCommand(buffertable)
     networker:FireServer(
@@ -18,15 +13,10 @@ function execCommand(buffertable)
     )
 end
 
--- 15 -> \x0F
-function decToHex(n)
-    return string.format("\\0x%X", n)
-end
-
 local TARGETALL = buffer.fromstring("\x03\x03\x00\x00\x00All")
-function userToBuf(user)
-    local b = buffer.fromstring("\x03\x00\x00\x00\x00"..user)
-    buffer.writeu8(b, 1, string.len(user))
+function strToBuf(s)
+    local b = buffer.fromstring("\x03\x00\x00\x00\x00"..s)
+    buffer.writeu8(b, 1, string.len(s))
     return b
 end
 
@@ -114,17 +104,18 @@ function forceNextKiller(targetbuf)
     })
 end
 
+-- broken and unnecessary
 function sendAnnouncement(msg)
-    execCommand({
-        COMMANDS["SendAnnouncement"],
-        buffer.fromstring("\x03\x02\x00\x00"..msg)
-    })
+    -- execCommand({
+    --     COMMANDS["SendAnnouncement"],
+    --     strToBuf(msg)
+    -- })
 end
 
 function begin1v1(killeruser)
     toggleTimer()
     task.wait(1)
-    forceNextKiller(userToBuf(killeruser))
+    forceNextKiller(strToBuf(killeruser))
     task.wait(1)
     forceIntermissionEnd()
     toggleTimer()
@@ -143,6 +134,49 @@ function endRound()
     toggleTimer()
 end
 
-begin1v1("th_vladaimir")
-task.wait(6)
-endRound()
+------------------- ORION -------------------
+
+local orion = loadstring(game:HttpGet(("https://raw.githubusercontent.com/jensonhirst/Orion/main/source")))()
+
+local window = orion:MakeWindow({Name = "PS Helper TH Vladimir", HidePremium = true, SaveConfig = false, ConfigFolder = "OrionTest", IntroText = "EBANATI2"})
+
+local maintab = window:MakeTab({
+	Name = "Main",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local killerdropdown = maintab:AddDropdown({
+	Name = "Killer",
+	Default = game.Players.LocalPlayer.Name,
+	Options = {game.Players.LocalPlayer.Name},
+	Flag = "killer"
+})
+
+function refreshDropdowns()
+    local names = {}
+    for _, plr in pairs(game.Players:GetPlayers()) do
+        table.insert(names, plr.Name)
+    end
+    killerdropdown:Refresh(names,true)
+    killerdropdown:Set(names[1])
+end
+
+game.Players.PlayerAdded:Connect(refreshDropdowns)
+game.Players.PlayerRemoving:Connect(refreshDropdowns)
+
+maintab:AddButton({
+	Name = "Begin 1v1",
+	Callback = function()
+        begin1v1(orion.Flags["killer"].Value)
+    end
+})
+
+maintab:AddButton({
+    Name = "End Round",
+    Callback = function()
+        endRound()
+    end
+})
+
+orion:Init()
