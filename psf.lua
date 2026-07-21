@@ -193,7 +193,13 @@ function endRound()
 end
 
 function canPlay(plr)
-
+    if not plr:GetAttribute("Loaded") then
+        return false
+    end
+    if not plr.PlayerData.Settings.Game.AFK.Value then
+        return false
+    end
+    return true
 end
 
 ------------------- ORION -------------------
@@ -288,12 +294,7 @@ maintab:AddButton({
             return
         end
         local roundTime = endRound()
-        orion:MakeNotification({
-            Name = "Round Over",
-            Content = "Round lasted "..tonumber(roundTime).." seconds",
-            Image = "rbxassetid://4483345998",
-            Time = 5
-        })
+        roundTimeLabel:Set(string.format("Last Round Lasted %02d:%02d", roundTime // 60, roundTime % 60))
     end
 })
 
