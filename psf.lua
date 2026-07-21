@@ -111,7 +111,12 @@ function sendAnnouncement(msg)
     -- })
 end
 
+local roundSettingUp = false
+local roundBegan = false
+local roundBeganAt = 0
+
 function begin1v1(killeruser, preptime)
+    roundSettingUp = true
     toggleTimer()
     task.wait(1)
     forceNextKiller(strToBuf(killeruser))
@@ -119,16 +124,25 @@ function begin1v1(killeruser, preptime)
     forceIntermissionEnd()
     toggleTimer()
     task.wait(preptime)
+    roundBeganAt = os.time()
+    roundBegan = true
     giveStatus(TARGETALL, STATUSTYPE["Slowness"], STATUSLEVEL["10l"], STATUSLEN["5s"])
     giveStatus(TARGETALL, STATUSTYPE["Helpless"], STATUSLEVEL["10l"], STATUSLEN["5s"])
+    task.wait(1)
+    roundSettingUp = false
 end
 
 function endRound()
+    roundSettingUp = true
     toggleTimer()
     task.wait(1)
     forceRoundEnd()
     task.wait(1)
     toggleTimer()
+    task.wait(1)
+    roundBegan = false
+    roundSettingUp = false
+    return os.time() - roundBeganAt
 end
 
 ------------------- ORION -------------------
@@ -177,6 +191,15 @@ game.Players.PlayerRemoving:Connect(refreshDropdowns)
 maintab:AddButton({
 	Name = "Begin 1v1",
 	Callback = function()
+        if roundSettingUp or roundBegan then
+            orion:MakeNotification({
+                Name = "Error",
+                Content = "Round has begun already",
+                Image = "rbxassetid://4483345998",
+                Time = 5
+            })
+            return
+        end
         begin1v1(orion.Flags["killer"].Value, orion.Flags["preptime"].Value)
     end
 })
@@ -184,7 +207,22 @@ maintab:AddButton({
 maintab:AddButton({
     Name = "End Round",
     Callback = function()
-        endRound()
+        if roundSettingUp or not roundBegan then
+            orion:MakeNotification({
+                Name = "Error",
+                Content = "Round hasn't begun",
+                Image = "rbxassetid://4483345998",
+                Time = 5
+            })
+            return
+        end
+        local roundTime = endRound()
+        orion:MakeNotification({
+            Name = "Round Over",
+            Content = "Round lasted"..tonumber(roundTime).." seconds",
+            Image = "rbxassetid://4483345998",
+            Time = 8
+        })
     end
 })
 
