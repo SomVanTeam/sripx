@@ -58,6 +58,13 @@ local STATUSLEN = {
     ["60s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00N@"),
     ["90s"] = buffer.fromstring(""),
 }
+local GAMEMODES = {
+    ["Normal"] = 0,
+    ["AllStatus"] = 1,
+}
+-- statustype = statuslevel
+local survivorStatuses = {}
+local killerStatuses = []
 
 function giveStatus(targetbuf, statustypebuf, statuslevelbuf, statuslenbuf)
     execCommand({
@@ -76,12 +83,24 @@ function killPlayer(targetbuf)
     })
 end
 
-local timerstopped = false
+local timerstopped = true
 function toggleTimer()
     execCommand({
         COMMANDS["ToggleTimer"]
     })
     timerstopped = not timerstopped
+end
+
+function startTimer()
+    if timerstopped then
+        toggleTimer()
+    end
+end
+
+function stopTimer()
+    if not timerstopped then
+        toggleTimer()
+    end
 end
 
 function forceRoundEnd()
@@ -115,14 +134,14 @@ local roundSettingUp = false
 local roundBegan = false
 local roundBeganAt = 0
 
-function begin1v1(killeruser, preptime)
+function beginWithKiller(killeruser, preptime)
     roundSettingUp = true
-    toggleTimer()
+    startTimer()
     task.wait(1)
     forceNextKiller(strToBuf(killeruser))
     task.wait(1)
     forceIntermissionEnd()
-    toggleTimer()
+    stopTimer()
     task.wait(preptime)
     roundBeganAt = os.time()
     roundBegan = true
@@ -134,11 +153,11 @@ end
 
 function endRound()
     roundSettingUp = true
-    toggleTimer()
+    startTimer()
     task.wait(1)
     forceRoundEnd()
     task.wait(1)
-    toggleTimer()
+    stopTimer()
     task.wait(1)
     roundBegan = false
     roundSettingUp = false
@@ -153,6 +172,18 @@ local window = orion:MakeWindow({Name = "PS Helper TH Vladimir", HidePremium = t
 
 local maintab = window:MakeTab({
 	Name = "Main",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local survivorstatustab = window:MakeTab({
+	Name = "Srv Statuses",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local killerstatustab = window:MakeTab({
+	Name = "Klr Statuses",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
@@ -189,7 +220,7 @@ game.Players.PlayerAdded:Connect(refreshDropdowns)
 game.Players.PlayerRemoving:Connect(refreshDropdowns)
 
 maintab:AddButton({
-	Name = "Begin 1v1",
+	Name = "Begin Round",
 	Callback = function()
         if roundSettingUp or roundBegan then
             orion:MakeNotification({
@@ -200,7 +231,7 @@ maintab:AddButton({
             })
             return
         end
-        begin1v1(orion.Flags["killer"].Value, orion.Flags["preptime"].Value)
+        beginWithKiller(orion.Flags["killer"].Value, orion.Flags["preptime"].Value)
     end
 })
 
@@ -219,7 +250,7 @@ maintab:AddButton({
         local roundTime = endRound()
         orion:MakeNotification({
             Name = "Round Over",
-            Content = "Round lasted"..tonumber(roundTime).." seconds",
+            Content = "Round lasted "..tonumber(roundTime).." seconds",
             Image = "rbxassetid://4483345998",
             Time = 8
         })
