@@ -318,12 +318,15 @@ refreshDropdowns()
 local d = 0
 function mainloop()
     if roundBegan then
+        print("1")
         if orion.Flags["givestatuses"].Value then
             d += 1
             if d >= 3*60 then
                 d = 0
                 for _, plr in pairs(game.Players:GetPlayers()) do
+                    print("2")
                     if canPlay(plr) then
+                        print("3")
                         if plr.Name == orion.Flags["killer"].Value then
                             for statustype, statuslevelraw in pairs(killerStatuses) do
                                 if statuslevelraw > 0 then
@@ -331,8 +334,11 @@ function mainloop()
                                 end
                             end
                         else
+                            print("4")
                             for statustype, statuslevelraw in pairs(survivorStatuses) do
+                                print("5")
                                 if statuslevelraw > 0 then
+                                    print("6")
                                     giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["10s"])
                                 end
                             end
