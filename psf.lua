@@ -107,7 +107,7 @@ end
 
 function forceNextKiller(targetbuf)
     execCommand({
-        COMMANDS["ForceNextKiler"],
+        COMMANDS["ForceNextKiller"],
         targetbuf
     })
 end
