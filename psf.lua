@@ -18,14 +18,16 @@ function execCommand(buffertable)
     )
 end
 
-local TARGETALL = buffer.fromstring("\x03\x03\x00\x00\x00All")--bufferFromBytes({3, 3, 0, 0, 0, 65, 108, 108})
+-- 15 -> \x0F
+function decToHex(n)
+    return string.format("\\0x%X", n)
+end
+
+local TARGETALL = buffer.fromstring("\x03\x03\x00\x00\x00All")
 function userToBuf(user)
-    -- local bytes = {3, 11, 0, 0, 0}
-    -- for _, char in pairs(user) do
-    --     table.insert(bytes, string.byte(char))
-    -- end
-    -- return bufferFromBytes(bytes)
-    return buffer.fromstring("\x03\x0B\x00\x00\x00"..user)
+    local b = buffer.fromstring("\x03\x00\x00\x00\x00"..user)
+    buffer.writeu8(b, 1, string.len(user))
+    return b
 end
 
 local COMMANDS = {
