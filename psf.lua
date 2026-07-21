@@ -35,6 +35,7 @@ local COMMANDS = {
     ["ForceNextKiller"] = buffer.fromstring("\x03\x0F\x00\x00\x00ForceNextKiller"),
     ["ForceRoundEnd"] = buffer.fromstring("\x03\r\x00\x00\x00ForceRoundEnd"),
     ["ForceIntermissionEnd"] = buffer.fromstring("\x03\x14\x00\x00\x00ForceIntermissionEnd"),
+    ["SendAnnouncement"] = buffer.fromstring("\x03\x10\x00\x00\x00SendAnnouncement")
 }
 local STATUSTYPE = {
     ["Vulnerable"] = buffer.fromstring("\x03\x0A\x00\x00\x00Vulnerable"),
@@ -111,9 +112,19 @@ function forceNextKiller(targetbuf)
     })
 end
 
+function sendAnnouncement(msg)
+    execCommand({
+        COMMANDS["SendAnnouncement"],
+        buffer.fromstring("\x03\x02\x00\x00"..msg)
+    })
+end
+
 forceNextKiller(userToBuf("th_vladaimir"))
+task.wait(1)
 forceIntermissionEnd()
 toggleTimer()
+task.wait(1)
+sendAnnouncement("STARTING IN 10 SECONDS")
 task.wait(10)
 giveStatus(TARGETALL, STATUSTYPE["Slowness"], STATUSLEVEL["10l"], STATUSLEN["5s"])
 giveStatus(TARGETALL, STATUSTYPE["Helpless"], STATUSLEVEL["10l"], STATUSLEN["5s"])
