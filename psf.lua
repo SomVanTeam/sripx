@@ -112,16 +112,14 @@ function sendAnnouncement(msg)
     -- })
 end
 
-function begin1v1(killeruser)
+function begin1v1(killeruser, preptime)
     toggleTimer()
     task.wait(1)
     forceNextKiller(strToBuf(killeruser))
     task.wait(1)
     forceIntermissionEnd()
     toggleTimer()
-    task.wait(1)
-    sendAnnouncement("STARTING IN 10 SECONDS")
-    task.wait(10)
+    task.wait(preptime)
     giveStatus(TARGETALL, STATUSTYPE["Slowness"], STATUSLEVEL["10l"], STATUSLEN["5s"])
     giveStatus(TARGETALL, STATUSTYPE["Helpless"], STATUSLEVEL["10l"], STATUSLEN["5s"])
 end
@@ -146,6 +144,17 @@ local maintab = window:MakeTab({
 	PremiumOnly = false
 })
 
+maintab:AddSlider({
+	Name = "Preptime",
+	Min = 5,
+	Max = 30,
+	Default = 10,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "bananas",
+    Flag = "preptime"
+})
+
 local killerdropdown = maintab:AddDropdown({
 	Name = "Killer",
 	Default = game.Players.LocalPlayer.Name,
@@ -168,7 +177,7 @@ game.Players.PlayerRemoving:Connect(refreshDropdowns)
 maintab:AddButton({
 	Name = "Begin 1v1",
 	Callback = function()
-        begin1v1(orion.Flags["killer"].Value)
+        begin1v1(orion.Flags["killer"].Value, orion.Flags["preptime"].Value)
     end
 })
 
