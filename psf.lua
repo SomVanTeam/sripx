@@ -32,6 +32,8 @@ local COMMANDS = {
 local STATUSTYPE = {
     ["Speed"] = buffer.fromstring("\x03\x05\x00\x00\x00Speed"),
     ["Nausea"] = buffer.fromstring("\x03\x06\x00\x00\x00Nausea"),
+    ["Strength"] = buffer.fromstring("\x03\x08\x00\x00\x00Strength"),
+    ["Weakness"] = buffer.fromstring("\x03\x08\x00\x00\x00Weakness"),
     ["Slowness"] = buffer.fromstring("\x03\x08\x00\x00\x00Slowness"),
     ["Helpless"] = buffer.fromstring("\x03\x08\x00\x00\x00Helpless"),
     ["Blindness"] = buffer.fromstring("\x03\x09\x00\x00\x00Blindness"),
@@ -42,26 +44,44 @@ local STATUSTYPE = {
     ["Resistance"] = buffer.fromstring("\x03\x0A\x00\x00\x00Resistance"),
     ["Invisibility"] = buffer.fromstring("\x03\x0B\x00\x00\x00Invisibility"),
 }
+--[[
+1 = 240 63 = 11110000 00111111
+2  = 0  64 = 00000000 01000000
+3  = 11 64 = 00001011 01000000
+4  = 16 64 = 00010000 01000000
+5  = 20 64 = 00010100 01000000
+6  = 24 64 = 00011000 01000000
+7  = 28 64 = 00011100 01000000
+8  = 32 64 = 00100000 01000000
+9  = 34 64 = 00100010 01000000
+10 = 36 64 = 00100100 01000000
+15 = 46 64 = 00101110 01000000
+20 = 52 64 = 00110100 01000000
+30 = 62 64 = 00111110 01000000
+60 = 78 64 = 01001110 01000000
+90 = 86 64 = 01010110 01000000
+]]
+
 local STATUSLEVEL = {
-    ["1l"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\xF0?"),
-    ["2l"] = buffer.fromstring(""),
-    ["3l"] = buffer.fromstring(""),
-    ["4l"] = buffer.fromstring(""),
-    ["5l"] = buffer.fromstring(""),
-    ["6l"] = buffer.fromstring(""),
-    ["7l"] = buffer.fromstring(""),
-    ["8l"] = buffer.fromstring(""),
-    ["9l"] = buffer.fromstring(""),
-    ["10l"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00$@"),
+    [1] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\xF0?"),
+    [2] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x00@"),
+    [3] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x0B@"),
+    [4] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x10@"),
+    [5] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x14@"),
+    [6] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x18@"),
+    [7] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x1C@"),
+    [8] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x20@"),
+    [9] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x22@"),
+    [10] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00$@"),
 }
 local STATUSLEN = {
     ["5s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x14@"),
     ["10s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00$@"),
-    ["15s"] = buffer.fromstring(""),
-    ["20s"] = buffer.fromstring(""),
+    ["15s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00.@"),
+    ["20s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x004@"),
     ["30s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00>@"),
     ["60s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00N@"),
-    ["90s"] = buffer.fromstring(""),
+    ["90s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00V@"),
 }
 
 local statusesMode = false
@@ -138,6 +158,9 @@ local roundBegan = false
 local roundBeganAt = 0
 
 function beginWithKiller(killeruser, preptime)
+    if #game.Players:GetPlayers() <= 1 then
+        return
+    end
     roundSettingUp = true
     startTimer()
     task.wait(1)
@@ -146,10 +169,12 @@ function beginWithKiller(killeruser, preptime)
     forceIntermissionEnd()
     stopTimer()
     task.wait(preptime)
+    giveStatus(TARGETALL, STATUSTYPE["Slowness"], STATUSLEVEL[10], STATUSLEN["5s"])
+    giveStatus(TARGETALL, STATUSTYPE["Helpless"], STATUSLEVEL[10], STATUSLEN["5s"])
+    giveStatus(TARGETALL, STATUSTYPE["Resistance"], STATUSLEVEL[10], STATUSLEN["5s"])
+    task.wait(5)
     roundBeganAt = os.time()
     roundBegan = true
-    giveStatus(TARGETALL, STATUSTYPE["Slowness"], STATUSLEVEL["10l"], STATUSLEN["5s"])
-    giveStatus(TARGETALL, STATUSTYPE["Helpless"], STATUSLEVEL["10l"], STATUSLEN["5s"])
     task.wait(1)
     roundSettingUp = false
 end
@@ -165,6 +190,10 @@ function endRound()
     roundBegan = false
     roundSettingUp = false
     return os.time() - roundBeganAt
+end
+
+function canPlay(plr)
+
 end
 
 ------------------- ORION -------------------
@@ -191,7 +220,7 @@ local killerstatustab = window:MakeTab({
 	PremiumOnly = false
 })
 
-function createStatusToggle(tab, statustable, status)
+function createStatusSlider(tab, statustable, status)
     tab:AddSlider({
         Name = status,
         Min = 0,
@@ -202,45 +231,33 @@ function createStatusToggle(tab, statustable, status)
         ValueName = "Level",
         Callback = function(Value)
             statustable[status] = Value
-        end    
+        end
     })
 end
 
 for statustype, statustypebuf in pairs(STATUSTYPE) do
-    createStatusToggle(survivorstatustab, survivorStatuses, statustype)
-    createStatusToggle(killerstatustab, killerStatuses, statustype)
+    createStatusSlider(survivorstatustab, survivorStatuses, statustype)
+    createStatusSlider(killerstatustab, killerStatuses, statustype)
 end
+
+local roundTimeLabel = maintab:AddLabel("---")
 
 maintab:AddSlider({
 	Name = "Preptime",
 	Min = 5,
-	Max = 45,
-	Default = 10,
+	Max = 60,
+	Default = 15,
 	Color = Color3.fromRGB(255,255,255),
 	Increment = 5,
 	ValueName = "Seconds",
     Flag = "preptime"
 })
 
-local killerdropdown = maintab:AddDropdown({
-	Name = "Killer",
-	Default = game.Players.LocalPlayer.Name,
-	Options = {game.Players.LocalPlayer.Name},
-	Flag = "killer"
+maintab:AddToggle({
+	Name = "Give Statuses",
+	Default = false,
+    Flag = "givestatuses"
 })
-
-function refreshDropdowns()
-    local names = {}
-    for _, plr in pairs(game.Players:GetPlayers()) do
-        table.insert(names, plr.Name)
-    end
-    killerdropdown:Refresh(names,true)
-    killerdropdown:Set(names[1])
-end
-refreshDropdowns()
-
-game.Players.PlayerAdded:Connect(refreshDropdowns)
-game.Players.PlayerRemoving:Connect(refreshDropdowns)
 
 maintab:AddButton({
 	Name = "Begin Round",
@@ -275,9 +292,59 @@ maintab:AddButton({
             Name = "Round Over",
             Content = "Round lasted "..tonumber(roundTime).." seconds",
             Image = "rbxassetid://4483345998",
-            Time = 8
+            Time = 5
         })
     end
 })
+
+local killerdropdown = maintab:AddDropdown({
+	Name = "Killer",
+	Default = game.Players.LocalPlayer.Name,
+	Options = {game.Players.LocalPlayer.Name},
+	Flag = "killer"
+})
+
+function refreshDropdowns()
+    local names = {}
+    for _, plr in pairs(game.Players:GetPlayers()) do
+        table.insert(names, plr.Name)
+    end
+    killerdropdown:Refresh(names,true)
+    killerdropdown:Set(names[1])
+end
+refreshDropdowns()
+
+local d = 0
+function mainloop()
+    if roundBegan then
+        if orion.Flags["givestatuses"].Value then
+            d += 1
+            if d >= 3*60 then
+                d = 0
+                for _, plr in pairs(game:GetPlayers()) do
+                    if canPlay(plr) then
+                        if plr.Name == orion.Flags["killer"].Value then
+                            for statustype, statuslevelraw in pairs(killerStatuses) do
+                                if statuslevelraw > 0 then
+                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["10s"])
+                                end
+                            end
+                        else
+                            for statustype, statuslevelraw in pairs(survivorStatuses) do
+                                if statuslevelraw > 0 then
+                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["10s"])
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+game.Players.PlayerAdded:Connect(refreshDropdowns)
+game.Players.PlayerRemoving:Connect(refreshDropdowns)
+game:GetService("RunService").Heartbeat:Connect(mainloop)
 
 orion:Init()
