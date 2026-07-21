@@ -196,7 +196,7 @@ function canPlay(plr)
     if not plr:GetAttribute("Loaded") then
         return false
     end
-    if not plr.PlayerData.Settings.Game.AFK.Value then
+    if plr.PlayerData.Settings.Game.AFK.Value then
         return false
     end
     return true
