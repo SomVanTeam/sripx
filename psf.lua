@@ -33,10 +33,9 @@ local STATUSTYPE = {
     ["Vulnerable"] = buffer.fromstring("\x03\x0A\x00\x00\x00Vulnerable"),
     ["Resistance"] = buffer.fromstring(""),
     ["Speed"] = buffer.fromstring(""),
-    ["Slowness"] = buffer.fromstring(""),
     ["Invisibility"] = buffer.fromstring(""),
-    ["Slowness"] = buffer.fromstring("\x03\b\x00\x00\x00Slowness"),
-    ["Helpless"] = buffer.fromstring("\x03\b\x00\x00\x00Helpless"),
+    ["Slowness"] = buffer.fromstring("\x03\x08\x00\x00\x00Slowness"),
+    ["Helpless"] = buffer.fromstring("\x03\x08\x00\x00\x00Helpless"),
 }
 local STATUSLEVEL = {
     ["1l"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\xF0?"),
@@ -147,11 +146,11 @@ local maintab = window:MakeTab({
 maintab:AddSlider({
 	Name = "Preptime",
 	Min = 5,
-	Max = 30,
+	Max = 45,
 	Default = 10,
 	Color = Color3.fromRGB(255,255,255),
-	Increment = 1,
-	ValueName = "bananas",
+	Increment = 5,
+	ValueName = "Seconds",
     Flag = "preptime"
 })
 
