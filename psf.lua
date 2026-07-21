@@ -42,7 +42,8 @@ local STATUSTYPE = {
     ["Speed"] = buffer.fromstring(""),
     ["Slowness"] = buffer.fromstring(""),
     ["Invisibility"] = buffer.fromstring(""),
-    ["Stunned"] = buffer.fromstring("\x03\a\x00\x00\x00Stunned"),
+    ["Slowness"] = buffer.fromstring("\x03\b\x00\x00\x00Slowness"),
+    ["Helpless"] = buffer.fromstring("\x03\b\x00\x00\x00Helpless"),
 }
 local STATUSLEVEL = {
     ["1l"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\xF0?"),
@@ -54,11 +55,11 @@ local STATUSLEVEL = {
     ["7l"] = buffer.fromstring(""),
     ["8l"] = buffer.fromstring(""),
     ["9l"] = buffer.fromstring(""),
-    ["10l"] = buffer.fromstring(""),
+    ["10l"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00$@"),
 }
 local STATUSLEN = {
     ["5s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x14@"),
-    ["10s"] = buffer.fromstring(""),
+    ["10s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00$@"),
     ["15s"] = buffer.fromstring(""),
     ["20s"] = buffer.fromstring(""),
     ["30s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00>@"),
@@ -113,5 +114,6 @@ end
 forceNextKiller(userToBuf("th_vladaimir"))
 forceIntermissionEnd()
 toggleTimer()
-task.wait(5)
-giveStatus(TARGETALL, STATUSTYPE["Stunned"], STATUSLEVEL["1l"], STATUSLEN["5s"])
+task.wait(10)
+giveStatus(TARGETALL, STATUSTYPE["Slowness"], STATUSLEVEL["10l"], STATUSLEN["5s"])
+giveStatus(TARGETALL, STATUSTYPE["Helpless"], STATUSLEVEL["10l"], STATUSLEN["5s"])
