@@ -63,10 +63,8 @@ local STATUSLEN = {
     ["60s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00N@"),
     ["90s"] = buffer.fromstring(""),
 }
-local GAMEMODES = {
-    ["Normal"] = 0,
-    ["AllStatus"] = 1,
-}
+
+local statusesMode = false
 -- statustype = statuslevel
 local survivorStatuses = {}
 local killerStatuses = {}
@@ -207,7 +205,7 @@ for statustype, statustypebuf in pairs(STATUSTYPE) do
                     end
                 end
             end
-            print(survivorStatuses)
+            print(#survivorStatuses)
         end    
     })
 end
