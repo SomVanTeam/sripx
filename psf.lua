@@ -322,7 +322,7 @@ function mainloop()
             d += 1
             if d >= 3*60 then
                 d = 0
-                for _, plr in pairs(game:GetPlayers()) do
+                for _, plr in pairs(game.Players:GetPlayers()) do
                     if canPlay(plr) then
                         if plr.Name == orion.Flags["killer"].Value then
                             for statustype, statuslevelraw in pairs(killerStatuses) do
