@@ -170,6 +170,7 @@ function refreshDropdowns()
     killerdropdown:Refresh(names,true)
     killerdropdown:Set(names[1])
 end
+refreshDropdowns()
 
 game.Players.PlayerAdded:Connect(refreshDropdowns)
 game.Players.PlayerRemoving:Connect(refreshDropdowns)
