@@ -331,13 +331,13 @@ function mainloop()
                         if plr.Name == orion.Flags["killer"].Value then
                             for statustype, statuslevelraw in pairs(killerStatuses) do
                                 if statuslevelraw > 0 then
-                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["30s"])
+                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["90s"])
                                 end
                             end
                         else
                             for statustype, statuslevelraw in pairs(survivorStatuses) do
                                 if statuslevelraw > 0 then
-                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["30s"])
+                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["90s"])
                                 end
                             end
                         end
