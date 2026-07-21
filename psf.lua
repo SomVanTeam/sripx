@@ -37,6 +37,7 @@ local STATUSTYPE = {
     ["Weakness"] = buffer.fromstring("\x03\x08\x00\x00\x00Weakness"),
     ["Slowness"] = buffer.fromstring("\x03\x08\x00\x00\x00Slowness"),
     ["Helpless"] = buffer.fromstring("\x03\x08\x00\x00\x00Helpless"),
+    ["Slateskin"] = buffer.fromstring("\x03\x09\x00\x00\x00Slateskin"),
     ["Blindness"] = buffer.fromstring("\x03\x09\x00\x00\x00Blindness"),
     ["Subspaced"] = buffer.fromstring("\x03\x09\x00\x00\x00Subspaced"),
     ["Confusion"] = buffer.fromstring("\x03\x09\x00\x00\x00Confusion"),
@@ -319,28 +320,23 @@ refreshDropdowns()
 local d = 0
 function mainloop()
     if roundBegan then
-        print("1")
         if orion.Flags["givestatuses"].Value then
             d += 1
             if d >= 3*60 then
                 d = 0
                 for _, plr in pairs(game.Players:GetPlayers()) do
-                    print("2")
                     if canPlay(plr) then
-                        print("3")
+                        -- this is fucking cancerous
                         if plr.Name == orion.Flags["killer"].Value then
                             for statustype, statuslevelraw in pairs(killerStatuses) do
                                 if statuslevelraw > 0 then
-                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["10s"])
+                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["30s"])
                                 end
                             end
                         else
-                            print("4")
                             for statustype, statuslevelraw in pairs(survivorStatuses) do
-                                print("5")
                                 if statuslevelraw > 0 then
-                                    print("6")
-                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["10s"])
+                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["30s"])
                                 end
                             end
                         end
