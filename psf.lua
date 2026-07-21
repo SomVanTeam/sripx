@@ -30,12 +30,17 @@ local COMMANDS = {
     ["SendAnnouncement"] = buffer.fromstring("\x03\x10\x00\x00\x00SendAnnouncement")
 }
 local STATUSTYPE = {
-    ["Vulnerable"] = buffer.fromstring("\x03\x0A\x00\x00\x00Vulnerable"),
-    ["Resistance"] = buffer.fromstring(""),
-    ["Speed"] = buffer.fromstring(""),
-    ["Invisibility"] = buffer.fromstring(""),
+    ["Speed"] = buffer.fromstring("\x03\x05\x00\x00\x00Speed"),
+    ["Nausea"] = buffer.fromstring("\x03\x06\x00\x00\x00Nausea"),
     ["Slowness"] = buffer.fromstring("\x03\x08\x00\x00\x00Slowness"),
     ["Helpless"] = buffer.fromstring("\x03\x08\x00\x00\x00Helpless"),
+    ["Blindness"] = buffer.fromstring("\x03\x09\x00\x00\x00Blindness"),
+    ["Subspaced"] = buffer.fromstring("\x03\x09\x00\x00\x00Subspaced"),
+    ["Confusion"] = buffer.fromstring("\x03\x09\x00\x00\x00Confusion"),
+    ["Exhausted"] = buffer.fromstring("\x03\x09\x00\x00\x00Exhausted"),
+    ["Vulnerable"] = buffer.fromstring("\x03\x0A\x00\x00\x00Vulnerable"),
+    ["Resistance"] = buffer.fromstring("\x03\x0A\x00\x00\x00Resistance"),
+    ["Invisibility"] = buffer.fromstring("\x03\x0B\x00\x00\x00Invisibility"),
 }
 local STATUSLEVEL = {
     ["1l"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\xF0?"),
@@ -64,7 +69,7 @@ local GAMEMODES = {
 }
 -- statustype = statuslevel
 local survivorStatuses = {}
-local killerStatuses = []
+local killerStatuses = {}
 
 function giveStatus(targetbuf, statustypebuf, statuslevelbuf, statuslenbuf)
     execCommand({
@@ -187,6 +192,25 @@ local killerstatustab = window:MakeTab({
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
+
+for statustype, statustypebuf in pairs(STATUSTYPE) do
+    survivorstatustab:AddToggle({
+        Name = statustype,
+        Default = false,
+        Callback = function(Value)
+            if Value then
+                table.insert(survivorStatuses, statustypebuf)
+            else
+                for i = #survivorStatuses, 1, -1 do
+                    if survivorStatuses[i] == statustypebuf then
+                        table.remove(survivorStatuses, i)
+                    end
+                end
+            end
+            print(survivorStatuses)
+        end    
+    })
+end
 
 maintab:AddSlider({
 	Name = "Preptime",
