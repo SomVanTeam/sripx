@@ -191,23 +191,28 @@ local killerstatustab = window:MakeTab({
 	PremiumOnly = false
 })
 
-for statustype, statustypebuf in pairs(STATUSTYPE) do
-    survivorstatustab:AddToggle({
-        Name = statustype,
+function createStatusToggle(tab, statustable, title, buf)
+    tab:AddToggle({
+        Name = title,
         Default = false,
         Callback = function(Value)
             if Value then
-                table.insert(survivorStatuses, statustypebuf)
+                table.insert(statustable, buf)
             else
-                for i = #survivorStatuses, 1, -1 do
-                    if survivorStatuses[i] == statustypebuf then
-                        table.remove(survivorStatuses, i)
+                for i = #statustable, 1, -1 do
+                    if statustable[i] == buf then
+                        table.remove(statustable, i)
                     end
                 end
             end
-            print(#survivorStatuses)
+            print(#statustable)
         end    
     })
+end
+
+for statustype, statustypebuf in pairs(STATUSTYPE) do
+    createStatusToggle(survivorstatustab, survivorStatuses, statustype, statustypebuf)
+    createStatusToggle(killerstatustab, killerStatuses, statustype, statustypebuf)
 end
 
 maintab:AddSlider({
