@@ -128,3 +128,8 @@ sendAnnouncement("STARTING IN 10 SECONDS")
 task.wait(10)
 giveStatus(TARGETALL, STATUSTYPE["Slowness"], STATUSLEVEL["10l"], STATUSLEN["5s"])
 giveStatus(TARGETALL, STATUSTYPE["Helpless"], STATUSLEVEL["10l"], STATUSLEN["5s"])
+task.wait(10)
+-- DEBUG
+toggleTimer()
+task.wait(1)
+forceRoundEnd()
