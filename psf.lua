@@ -141,9 +141,9 @@ function beginWithKiller(killeruser, preptime)
     forceIntermissionEnd()
     stopTimer()
     task.wait(preptime)
-    giveStatus(TARGETALL, STATUSTYPE["Slowness"], numToBuf(100), numToBuf(5))
-    giveStatus(TARGETALL, STATUSTYPE["Helpless"], numToBuf(67), numToBuf(500))
-    giveStatus(TARGETALL, STATUSTYPE["Resistance"], numToBuf(222), numToBuf(167))
+    giveStatus(TARGETALL, STATUSTYPE["Slowness"], numToBuf(16), numToBuf(5))
+    giveStatus(TARGETALL, STATUSTYPE["Helpless"], numToBuf(167), numToBuf(5))
+    giveStatus(TARGETALL, STATUSTYPE["Resistance"], numToBuf(167), numToBuf(5))
     task.wait(5)
     roundBeganAt = os.time()
     roundBegan = true
@@ -203,7 +203,7 @@ function createStatusSlider(tab, statustable, status)
     tab:AddSlider({
         Name = status,
         Min = 0,
-        Max = 10,
+        Max = 20,
         Default = 0,
         Color = Color3.fromRGB(255,255,255),
         Increment = 1,
