@@ -50,6 +50,7 @@ local STATUSTYPE = {
     ["Subspaced"] = buffer.fromstring("\x03\x09\x00\x00\x00Subspaced"),
     ["Confusion"] = buffer.fromstring("\x03\x09\x00\x00\x00Confusion"),
     ["Exhausted"] = buffer.fromstring("\x03\x09\x00\x00\x00Exhausted"),
+    ["Oblivious"] = buffer.fromstring("\x03\x09\x00\x00\x00Oblivious"),
     ["Vulnerable"] = buffer.fromstring("\x03\x0A\x00\x00\x00Vulnerable"),
     ["Resistance"] = buffer.fromstring("\x03\x0A\x00\x00\x00Resistance"),
     ["Regeneration"] = buffer.fromstring("\x03\x0B\x00\x00\x00Regeneration"),
@@ -207,7 +208,7 @@ function createStatusSlider(tab, statustable, status)
         Default = 0,
         Color = Color3.fromRGB(255,255,255),
         Increment = 1,
-        ValueName = "Level",
+        ValueName = "Lvl",
         Callback = function(Value)
             statustable[status] = Value
         end
@@ -222,7 +223,7 @@ end
 local roundTimeLabel = maintab:AddLabel("---")
 
 maintab:AddSlider({
-	Name = "Preptime",
+	Name = "Setup Time",
 	Min = 5,
 	Max = 60,
 	Default = 10,
