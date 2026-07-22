@@ -51,10 +51,10 @@ local STATUSTYPE = {
     ["Confusion"] = buffer.fromstring("\x03\x09\x00\x00\x00Confusion"),
     ["Exhausted"] = buffer.fromstring("\x03\x09\x00\x00\x00Exhausted"),
     ["Oblivious"] = buffer.fromstring("\x03\x09\x00\x00\x00Oblivious"),
-    ["Vulnerable"] = buffer.fromstring("\x03\x0A\x00\x00\x00Vulnerable"),
-    ["Resistance"] = buffer.fromstring("\x03\x0A\x00\x00\x00Resistance"),
-    ["Regeneration"] = buffer.fromstring("\x03\x0B\x00\x00\x00Regeneration"),
-    ["Invisibility"] = buffer.fromstring("\x03\x0B\x00\x00\x00Invisibility"),
+    ["Vulnerable"] = buffer.fromstring("\x03\x0a\x00\x00\x00Vulnerable"),
+    ["Resistance"] = buffer.fromstring("\x03\x0a\x00\x00\x00Resistance"),
+    ["Regeneration"] = buffer.fromstring("\x03\x0c\x00\x00\x00Regeneration"),
+    ["Invisibility"] = buffer.fromstring("\x03\x0c\x00\x00\x00Invisibility"),
 }
 
 local statusesMode = false
@@ -142,9 +142,9 @@ function beginWithKiller(killeruser, preptime)
     forceIntermissionEnd()
     stopTimer()
     task.wait(preptime)
-    giveStatus(TARGETALL, STATUSTYPE["Slowness"], numToBuf(16), numToBuf(5))
+    giveStatus(TARGETALL, STATUSTYPE["Slowness"], numToBuf(10), numToBuf(5))
     giveStatus(TARGETALL, STATUSTYPE["Helpless"], numToBuf(167), numToBuf(5))
-    giveStatus(TARGETALL, STATUSTYPE["Resistance"], numToBuf(167), numToBuf(5))
+    giveStatus(TARGETALL, STATUSTYPE["Resistance"], numToBuf(3999), numToBuf(5))
     task.wait(5)
     roundBeganAt = os.time()
     roundBegan = true
