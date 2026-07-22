@@ -141,9 +141,9 @@ function beginWithKiller(killeruser, preptime)
     forceIntermissionEnd()
     stopTimer()
     task.wait(preptime)
-    giveStatus(TARGETALL, STATUSTYPE["Slowness"], numToBuf(10), numToBuf(5))
-    giveStatus(TARGETALL, STATUSTYPE["Helpless"], numToBuf(10), numToBuf(5))
-    giveStatus(TARGETALL, STATUSTYPE["Resistance"], numToBuf(10), numToBuf(5))
+    giveStatus(TARGETALL, STATUSTYPE["Slowness"], numToBuf(100), numToBuf(5))
+    giveStatus(TARGETALL, STATUSTYPE["Helpless"], numToBuf(67), numToBuf(500))
+    giveStatus(TARGETALL, STATUSTYPE["Resistance"], numToBuf(222), numToBuf(167))
     task.wait(5)
     roundBeganAt = os.time()
     roundBegan = true
@@ -225,7 +225,7 @@ maintab:AddSlider({
 	Name = "Preptime",
 	Min = 5,
 	Max = 60,
-	Default = 15,
+	Default = 10,
 	Color = Color3.fromRGB(255,255,255),
 	Increment = 5,
 	ValueName = "Seconds",
