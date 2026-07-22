@@ -55,46 +55,6 @@ local STATUSTYPE = {
     ["Regeneration"] = buffer.fromstring("\x03\x0B\x00\x00\x00Regeneration"),
     ["Invisibility"] = buffer.fromstring("\x03\x0B\x00\x00\x00Invisibility"),
 }
---[[
-1 = 240 63 = 11110000 00111111
-2  = 0  64 = 00000000 01000000
-3  = 11 64 = 00001011 01000000
-4  = 16 64 = 00010000 01000000
-5  = 20 64 = 00010100 01000000
-6  = 24 64 = 00011000 01000000
-7  = 28 64 = 00011100 01000000
-8  = 32 64 = 00100000 01000000
-9  = 34 64 = 00100010 01000000
-10 = 36 64 = 00100100 01000000
-15 = 46 64 = 00101110 01000000
-20 = 52 64 = 00110100 01000000
-30 = 62 64 = 00111110 01000000
-60 = 78 64 = 01001110 01000000
-90 = 86 64 = 01010110 01000000
-00 00 00 00 00 00 0B 40
-]]
-
-local STATUSLEVEL = {
-    [1] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\xF0?"),
-    [2] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x00@"),
-    [3] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x0B@"),
-    [4] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x10@"),
-    [5] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x14@"),
-    [6] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x18@"),
-    [7] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x1C@"),
-    [8] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x20@"),
-    [9] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x22@"),
-    [10] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00$@"),
-}
-local STATUSLEN = {
-    ["5s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00\x14@"),
-    ["10s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00$@"),
-    ["15s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00.@"),
-    ["20s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x004@"),
-    ["30s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00>@"),
-    ["60s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00N@"),
-    ["90s"] = buffer.fromstring("\x02\x00\x00\x00\x00\x00\x00V@"),
-}
 
 local statusesMode = false
 -- statustype = statuslevel
@@ -181,9 +141,9 @@ function beginWithKiller(killeruser, preptime)
     forceIntermissionEnd()
     stopTimer()
     task.wait(preptime)
-    giveStatus(TARGETALL, STATUSTYPE["Slowness"], STATUSLEVEL[10], numToBuf(10))
-    giveStatus(TARGETALL, STATUSTYPE["Helpless"], STATUSLEVEL[10], numToBuf(67))
-    giveStatus(TARGETALL, STATUSTYPE["Resistance"], STATUSLEVEL[10], numToBuf(6))
+    giveStatus(TARGETALL, STATUSTYPE["Slowness"], numToBuf(10), numToBuf(5))
+    giveStatus(TARGETALL, STATUSTYPE["Helpless"], numToBuf(10), numToBuf(5))
+    giveStatus(TARGETALL, STATUSTYPE["Resistance"], numToBuf(10), numToBuf(5))
     task.wait(5)
     roundBeganAt = os.time()
     roundBegan = true
@@ -341,13 +301,13 @@ function mainloop()
                         if plr.Name == orion.Flags["killer"].Value then
                             for statustype, statuslevelraw in pairs(killerStatuses) do
                                 if statuslevelraw > 0 then
-                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["30s"])
+                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], numToBuf(statuslevelraw), numToBuf(30))
                                 end
                             end
                         else
                             for statustype, statuslevelraw in pairs(survivorStatuses) do
                                 if statuslevelraw > 0 then
-                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["30s"])
+                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], numToBuf(statuslevelraw), numToBuf(30))
                                 end
                             end
                         end
