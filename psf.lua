@@ -21,6 +21,14 @@ function strToBuf(s)
     return b
 end
 
+function numToBuf(n)
+    -- 02 00 00 00 00 00 00 0B 40
+    local b = buffer.create(9)
+    buffer.writeu8(b, 0, 2)
+    buffer.writef64(b, 1, n)
+    return b
+end
+
 local COMMANDS = {
     ["GiveStatus"] = buffer.fromstring("\x03\x0A\x00\x00\x00GiveStatus"),
     ["KillPlayer"] = buffer.fromstring("\x03\x0A\x00\x00\x00KillPlayer"),
@@ -44,6 +52,7 @@ local STATUSTYPE = {
     ["Exhausted"] = buffer.fromstring("\x03\x09\x00\x00\x00Exhausted"),
     ["Vulnerable"] = buffer.fromstring("\x03\x0A\x00\x00\x00Vulnerable"),
     ["Resistance"] = buffer.fromstring("\x03\x0A\x00\x00\x00Resistance"),
+    ["Regeneration"] = buffer.fromstring("\x03\x0B\x00\x00\x00Regeneration"),
     ["Invisibility"] = buffer.fromstring("\x03\x0B\x00\x00\x00Invisibility"),
 }
 --[[
@@ -62,6 +71,7 @@ local STATUSTYPE = {
 30 = 62 64 = 00111110 01000000
 60 = 78 64 = 01001110 01000000
 90 = 86 64 = 01010110 01000000
+00 00 00 00 00 00 0B 40
 ]]
 
 local STATUSLEVEL = {
@@ -171,7 +181,7 @@ function beginWithKiller(killeruser, preptime)
     forceIntermissionEnd()
     stopTimer()
     task.wait(preptime)
-    giveStatus(TARGETALL, STATUSTYPE["Slowness"], STATUSLEVEL[10], STATUSLEN["5s"])
+    giveStatus(TARGETALL, STATUSTYPE["Slowness"], STATUSLEVEL[10], numToBuf(5))--STATUSLEN["5s"])
     giveStatus(TARGETALL, STATUSTYPE["Helpless"], STATUSLEVEL[10], STATUSLEN["5s"])
     giveStatus(TARGETALL, STATUSTYPE["Resistance"], STATUSLEVEL[10], STATUSLEN["5s"])
     task.wait(5)
@@ -331,13 +341,13 @@ function mainloop()
                         if plr.Name == orion.Flags["killer"].Value then
                             for statustype, statuslevelraw in pairs(killerStatuses) do
                                 if statuslevelraw > 0 then
-                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["90s"])
+                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["30s"])
                                 end
                             end
                         else
                             for statustype, statuslevelraw in pairs(survivorStatuses) do
                                 if statuslevelraw > 0 then
-                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["90s"])
+                                    giveStatus(strToBuf(plr.Name), STATUSTYPE[statustype], STATUSLEVEL[statuslevelraw], STATUSLEN["30s"])
                                 end
                             end
                         end
