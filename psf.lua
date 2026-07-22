@@ -36,7 +36,8 @@ local COMMANDS = {
     ["ForceNextKiller"] = buffer.fromstring("\x03\x0F\x00\x00\x00ForceNextKiller"),
     ["ForceRoundEnd"] = buffer.fromstring("\x03\r\x00\x00\x00ForceRoundEnd"),
     ["ForceIntermissionEnd"] = buffer.fromstring("\x03\x14\x00\x00\x00ForceIntermissionEnd"),
-    ["SendAnnouncement"] = buffer.fromstring("\x03\x10\x00\x00\x00SendAnnouncement")
+    ["SendAnnouncement"] = buffer.fromstring("\x03\x10\x00\x00\x00SendAnnouncement"),
+    ["TurnPlayerToCharacter"] = buffer.fromstring("\x03\x15\x00\x00\x00TurnPlayerToCharacter"),
 }
 local STATUSTYPE = {
     ["Speed"] = buffer.fromstring("\x03\x05\x00\x00\x00Speed"),
@@ -76,6 +77,22 @@ function killPlayer(targetbuf)
     execCommand({
         COMMANDS["KillPlayer"],
         targetbuf
+    })
+end
+
+function turnIntoKiller(targetbuf)
+    execCommand({
+        COMMANDS["TurnPlayerToCharacter"],
+        targetbuf,
+        buffer.fromstring("\x03\x06\x00\x00\x00Killer")
+    })
+end
+
+function turnIntoSurvivor(targetbuf)
+    execCommand({
+        COMMANDS["TurnPlayerToCharacter"],
+        targetbuf,
+        buffer.fromstring("\x03\x08\x00\x00\x00Survivor")
     })
 end
 
@@ -141,14 +158,15 @@ function beginWithKiller(killeruser, preptime)
     forceNextKiller(strToBuf(killeruser))
     task.wait(1)
     forceIntermissionEnd()
-    if not useTimer then
-        stopTimer()
-    end
+    stopTimer()
     task.wait(preptime)
     giveStatus(TARGETALL, STATUSTYPE["Slowness"], numToBuf(10), numToBuf(5))
-    giveStatus(TARGETALL, STATUSTYPE["Helpless"], numToBuf(167), numToBuf(5))
+    giveStatus(TARGETALL, STATUSTYPE["Helpless"], numToBuf(67), numToBuf(5))
     giveStatus(TARGETALL, STATUSTYPE["Resistance"], numToBuf(3999), numToBuf(5))
     task.wait(5)
+    if useTimer then
+        startTimer()
+    end
     roundBeganAt = os.time()
     roundBegan = true
     task.wait(1)
@@ -297,20 +315,9 @@ maintab:AddButton({
 })
 
 function onRoundEnd()
-    orion:MakeNotification({
-        Name = "Round Ended 1",
-        Content = "1",
-        Image = "rbxassetid://4483345998",
-        Time = 3
-    })
     if useTimer then
-        orion:MakeNotification({
-            Name = "Round Ended 2",
-            Content = "2",
-            Image = "rbxassetid://4483345998",
-            Time = 3
-        })
         roundSettingUp = true
+        task.wait(3)
         stopTimer()
         roundBegan = false
         roundSettingUp = false
