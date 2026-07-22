@@ -51,10 +51,10 @@ local STATUSTYPE = {
     ["Confusion"] = buffer.fromstring("\x03\x09\x00\x00\x00Confusion"),
     ["Exhausted"] = buffer.fromstring("\x03\x09\x00\x00\x00Exhausted"),
     ["Oblivious"] = buffer.fromstring("\x03\x09\x00\x00\x00Oblivious"),
-    ["Vulnerable"] = buffer.fromstring("\x03\x0a\x00\x00\x00Vulnerable"),
-    ["Resistance"] = buffer.fromstring("\x03\x0a\x00\x00\x00Resistance"),
-    ["Regeneration"] = buffer.fromstring("\x03\x0c\x00\x00\x00Regeneration"),
-    ["Invisibility"] = buffer.fromstring("\x03\x0c\x00\x00\x00Invisibility"),
+    ["Vulnerable"] = buffer.fromstring("\x03\x0A\x00\x00\x00Vulnerable"),
+    ["Resistance"] = buffer.fromstring("\x03\x0A\x00\x00\x00Resistance"),
+    ["Regeneration"] = buffer.fromstring("\x03\x0C\x00\x00\x00Regeneration"),
+    ["Invisibility"] = buffer.fromstring("\x03\x0C\x00\x00\x00Invisibility"),
 }
 
 local statusesMode = false
@@ -126,6 +126,7 @@ function sendAnnouncement(msg)
     -- })
 end
 
+local useTimer = false
 local roundSettingUp = false
 local roundBegan = false
 local roundBeganAt = 0
@@ -140,7 +141,9 @@ function beginWithKiller(killeruser, preptime)
     forceNextKiller(strToBuf(killeruser))
     task.wait(1)
     forceIntermissionEnd()
-    stopTimer()
+    if not useTimer then
+        stopTimer()
+    end
     task.wait(preptime)
     giveStatus(TARGETALL, STATUSTYPE["Slowness"], numToBuf(10), numToBuf(5))
     giveStatus(TARGETALL, STATUSTYPE["Helpless"], numToBuf(167), numToBuf(5))
@@ -233,6 +236,27 @@ maintab:AddSlider({
     Flag = "preptime"
 })
 
+local timertoggle
+timertoggle = maintab:AddToggle({
+	Name = "Use Timer",
+	Default = useTimer,
+    Callback = function(Value)
+        if Value ~= useTimer then
+            if roundSettingUp or roundBegan then
+                orion:MakeNotification({
+                    Name = "Error",
+                    Content = "Cannot change mid-round",
+                    Image = "rbxassetid://4483345998",
+                    Time = 5
+                })
+                timertoggle:Set(useTimer)
+            else
+                useTimer = Value
+            end
+        end
+    end
+})
+
 maintab:AddToggle({
 	Name = "Give Statuses",
 	Default = false,
@@ -258,7 +282,7 @@ maintab:AddButton({
 maintab:AddButton({
     Name = "End Round",
     Callback = function()
-        if roundSettingUp or not roundBegan then
+        if useTimer or roundSettingUp or not roundBegan then
             orion:MakeNotification({
                 Name = "Error",
                 Content = "Round hasn't begun",
@@ -271,6 +295,29 @@ maintab:AddButton({
         roundTimeLabel:Set(string.format("Last Round Lasted %02d:%02d", roundTime // 60, roundTime % 60))
     end
 })
+
+function onRoundEnd()
+    orion:MakeNotification({
+        Name = "Round Ended 1",
+        Content = "1",
+        Image = "rbxassetid://4483345998",
+        Time = 3
+    })
+    if useTimer then
+        orion:MakeNotification({
+            Name = "Round Ended 2",
+            Content = "2",
+            Image = "rbxassetid://4483345998",
+            Time = 3
+        })
+        roundSettingUp = true
+        stopTimer()
+        roundBegan = false
+        roundSettingUp = false
+        local roundTime = os.time() - roundBeganAt
+        roundTimeLabel:Set(string.format("Last Round Lasted %02d:%02d", roundTime // 60, roundTime % 60))
+    end
+end
 
 local killerdropdown = maintab:AddDropdown({
 	Name = "Killer",
@@ -319,6 +366,11 @@ function mainloop()
     end
 end
 
+networker.OnClientEvent:Connect(function(message, buftable)
+    if message == "RoundEnded" then
+        onRoundEnd()
+    end
+end)
 game.Players.PlayerAdded:Connect(refreshDropdowns)
 game.Players.PlayerRemoving:Connect(refreshDropdowns)
 game:GetService("RunService").Heartbeat:Connect(mainloop)
